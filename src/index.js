@@ -3,10 +3,11 @@ const bodyParser = require("body-parser");
 
 const { PORT } = require("./config/server-config");
 const apiRoutes = require("./routes/index");
- UserService = require("./services/user-service");
+// const UserService = require("./services/user-service");
+
+const db = require('./models/index');
 
 
-UserService = require('./services/user-service');
 
 
 
@@ -20,9 +21,14 @@ const prepareAndStartServer = () => {
   app.use("/api", apiRoutes);
 
 
-  app.listen(PORT, () => {
+  app.listen(PORT,async () => {
     console.log(`Server started at PORT: ${PORT}`);
      
+ 
+
+    // if(process.env.DB_SYNC){
+    //    db.sequelize.sync({alter:true});
+    // }
 
 
     // const service = new UserService();
