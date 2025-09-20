@@ -17,6 +17,8 @@ router.post(
 
 router.get("/isAuthenticated", UserController.isAthenticated);
 
+router.get("/isAdmin",AuthRequestValidator.validateIsAdminRequest,UserController.isAdmin);
+
 // router.get("dummy", (req, res) => {
 //   return res.status(200).json({ message: "ok" });
 // });

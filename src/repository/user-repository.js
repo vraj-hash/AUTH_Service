@@ -1,4 +1,4 @@
-const { User } = require("../models/index");
+const { User,Role } = require("../models/index");
 
 class UserRepository {
   async create(data) {
@@ -37,18 +37,34 @@ class UserRepository {
     }
   }
 
-  async getByEmail(userEmail)
-  {
-    try{
+  async getByEmail(userEmail) {
+    try {
       const user = await User.findOne({
-        where:{
-          email:userEmail
-        }
+        where: {
+          email: userEmail,
+        },
       });
       return user;
-    } catch(error)
-    {
+    } catch (error) {
       console.log("user does not present ");
+      throw error;
+    }
+  }
+
+  async isAdmin(userId) {
+    try {
+      const user = await User.findByPk(userId);
+      // console.log(user);
+      const adminRole = await Role.findOne({
+        where: {
+          name: 'ADMIN',
+        }
+      });
+      console.log(adminRole);
+
+      return user.hasRole(adminRole);
+    } catch (error) {
+      console.log("Something went wrong in user repository");
       throw error;
     }
   }
