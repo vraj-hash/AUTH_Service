@@ -37,11 +37,32 @@ class UserService {
     }
   }
 
+  async signIn(email, plainPassword) {
+    try {
+      //step 1 fetch the user by email
+      const user = await this.userRepository.getByEmail(email);
+      //step-2 compare incoming passward with stores encryted pass
+      const passwordMatch = this.checkPassword(plainPassword, user.password);
+
+      if (!passwordMatch) {
+        console.log("password does not match");
+        throw { error: 'incorrect password' };
+      }
+      // step 3 if pass match create token
+      const newJWT = this.createToken({ email: user.email, id: user.id });
+
+      return newJWT;
+    } catch (error) {
+      console.log("Something went wrong in the sign in process");
+      throw error;
+    }
+  }
+
   checkPassword(userInputPlainPassword, encryptedPassword) {
     try {
       return bcrypt.compareSync(userInputPlainPassword, encryptedPassword);
-    } catch {
-      console.log("Something went wrong while creating passwrod");
+    } catch (error) {
+      console.log("Something went wrong while passwrod comparison");
       throw error;
     }
   }
