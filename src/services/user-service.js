@@ -19,7 +19,7 @@ class UserService {
 
   createToken(user) {
     try {
-      const result = jwt.sign(user, JWT_KEY, { expiresIn: "1h" });
+      const result = jwt.sign(user, JWT_KEY, { expiresIn: "1d" });
       return result;
     } catch {
       console.log("Something went wrong while creating the token");
@@ -46,14 +46,34 @@ class UserService {
 
       if (!passwordMatch) {
         console.log("password does not match");
-        throw { error: 'incorrect password' };
+        throw { error: "incorrect password" };
       }
       // step 3 if pass match create token
       const newJWT = this.createToken({ email: user.email, id: user.id });
 
       return newJWT;
     } catch (error) {
-      console.log("Something went wrong in the sign in process");
+      console.log("Something went wrong in the signin process");
+      throw error;
+    }
+  }
+
+  async isAuthenticated(token) {
+    try {
+      const response = this.verifyToken(token);
+      if(!response)
+      {
+        throw {error : 'Invalid token'};
+      }
+
+      const user  = this.userRepository.getById(response.id);
+      if(!user)
+      {
+        throw {error:'No user with the corresponding token exists'};
+      }
+      return user.id;
+    } catch (error) {
+      console.log("Something went wrong in the Auth  process");
       throw error;
     }
   }
